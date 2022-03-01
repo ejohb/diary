@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+
+        a {
+            font-size: smaller;
+            border-style: solid;
+            border-width: 0.5px;
+            border-color: transparent;
+        }
+
+        a:link {
+            text-decoration: none;
+            color: rgb(102, 77, 27);
+        }
+
+        a:visited {
+            text-decoration: none;
+            color: rgb(54, 41, 14);
+        }
+
+        a:hover {
+            border-color: rgb(102, 77, 27);
+        }
+
+        a:active {
+            text-decoration: underline;
+            color: rgb(102, 77, 27);
+        }
+
+        body {
+            background-color: rgb(39, 46, 41);
+        }
+
+        h2 {
+            font-size: x-large;
+            font-weight: normal;
+            text-decoration: underline;
+        }
+
+        #image {
+            width: 800px;
+            mask-size: 100%;
+            -webkit-mask-size: 100%;
+
+            display: none;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 50px;
+        }
+
+        .text {
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 18px;
+            text-align: justify;
+            background-color: white;
+            width: 775px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 50px;
+            padding: 25px;
+        }
+
+        #transcription.text * :not(.tooltip-text) {
+            font-family: "Segoe UI", Arial, serif;
+        }
+
+        #intro.text * {
+            font-family: Georgia, "Times New Roman", serif;
+        }
+
+        #intro {
+            display: none;
+            background-color: #f5d5b9;
+            background-image: url("texture-small.png");
+        }
+
+
+        #transcription {
+            display: none;
+        }
+
+        .text * :not(.nav-link) {
+
+            display: inline;
+
+        }
+
+        .date {
+            text-decoration: underline;
+
+        }
+
+        .crossed-out {
+            text-decoration: line-through;
+
+        }
+
+        .quotation {
+            margin-left: 20px;
+            text-indent: 20px each-line;
+            display: inline-block;
+
+        }
+
+        .control {
+            display: block;
+            #color: white;
+            font-size: 10px;
+            background-color: #ebebeb;
+            background-size: 20px 20px;
+            background-repeat: no-repeat;
+            background-position: 2px;
+            padding: 5px;
+            border-radius: 5px 5px 5px;
+            border: 1px solid black;
+            #padding-left: 25px;
+            position: relative;
+        }
+
+        .nav-link {
+            white-space: nowrap;
+        }
+
+        #transcription .nav-link {
+            display: none;
+        }
+
+        .page-break {
+            display: none;
+        }
+
+        .header {
+            color: rgb(148, 112, 40);
+            font-size: 32px;
+        }
+
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            font-family: Georgia, "Times New Roman", serif;
+            width: 200px;
+            background-color: #664400;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+        }
+
+
+    </style>
+    <script>
+
+        function view_folio(params) {
+            const page_no_max = 18;
+            const LEAVES = [2, 18];
+
+            let number = parseInt(params.number);
+            let side = (params.side === 'b') ? "b" : "a";
+
+            let IS_SIDE_A = (side === 'a');
+            let IS_FIRST = (number === 1 && IS_SIDE_A);
+
+            let IS_LEAF = LEAVES.includes(number);
+            let IS_LAST = (number === page_no_max && (!IS_SIDE_A || IS_LEAF));
+
+            let page_no_next = parseInt(number) + 1;
+            let page_no_prev = parseInt(number) - 1;
+            let page_src_verso = `folio${number}${side}-verso.html`;
+            let page_src_recto = `folio${number}${side}-recto.html`;
+            let uri_image = `folio${number}${side}.png`;
+            let uri_mask = `folio${number}${side}.svg`;
+            let style = `mask-image: url(${uri_mask}); -webkit-mask-image: url(${uri_mask});`;
+
+            $("#image").attr("style", style).attr("src", uri_image).show().css("display", "block");
+            $("#transcription").show()
+            $("#verso .text-content").load(page_src_verso);
+            $("#recto .text-content").load(page_src_recto);
+
+
+            const OTHER_SIDE = (IS_SIDE_A && !IS_LEAF) ? "b" : "a";
+
+            let NEXT_NUMBER = (IS_LEAF) ? number + 1 : number;
+            let PREV_NUMBER = (IS_LEAF) ? number - 1 : number;
+
+            let href_verso_prev = `?number=${PREV_NUMBER}&side=${OTHER_SIDE}`;
+            let href_recto_next = `?number=${NEXT_NUMBER}&side=${OTHER_SIDE}`;
+            $("#verso .prev").attr("href", href_verso_prev).show();
+
+            if (!IS_LAST) {
+                $("#recto .next").attr("href", href_recto_next).show();
+            }
+
+
+            if (IS_SIDE_A && !IS_LEAF) {
+                let href_verso_next = `?number=${number + 1}&side=a`;
+                let href_recto_prev = `?number=${number - 1}&side=a`;
+                $("#verso .next").attr("href", href_verso_next).show();
+
+                if (!IS_FIRST) {
+                    $("#recto .prev").attr("href", href_recto_prev).show();
+                }
+
+                $("#transcription .page-break").show();
+            }
+
+        }
+
+        function view_intro() {
+            $("#intro").show().load("intro.html");
+        }
+
+        $(
+            function () {
+
+                const params = new Proxy(new URLSearchParams(window.location.search), {
+                    get: (searchParams, prop) => searchParams.get(prop),
+                });
+
+                if (params.number != null) {
+                    view_folio(params);
+                } else {
+                    view_intro();
+                }
+
+            }
+        )
+        ;
+    </script>
+    <title>Robert Brown War Diary Archive</title>
+</head>
+
+<body>
+
+<a href=".">
+    <div class="header">Robert Brown War Diary Archive</div>
+</a>
+
+<img id="image">
+
+<div id="transcription" class="text">
+
+
+    <div class="page" id="verso">
+        <a class="nav-link prev">↞ Previous</a>
+        <div class="text-content"></div>
+        <a class="nav-link next">Next ↠</a>
+    </div>
+
+    <div class="page-break"><br/><br/></div>
+
+    <div class="page" id="recto">
+        <a class="nav-link prev">↞ Previous</a>
+        <div class="text-content"></div>
+        <a class="nav-link next">Next ↠</a>
+    </div>
+
+
+</div>
+
+<div id="intro" class="text"></div>
+
+
+</body>
+</html>
