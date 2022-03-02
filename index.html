@@ -41,7 +41,7 @@
             text-decoration: underline;
         }
 
-        #image {
+        .image {
             width: 800px;
             mask-size: 100%;
             -webkit-mask-size: 100%;
@@ -50,6 +50,10 @@
             margin-left: auto;
             margin-right: auto;
             margin-top: 50px;
+        }
+
+        .page {
+            display: none;
         }
 
         .text {
@@ -66,7 +70,7 @@
             padding: 25px;
         }
 
-        #transcription.text * :not(.tooltip-text) {
+        .transcription.text * :not(.tooltip-text) {
             font-family: "Segoe UI", Arial, serif;
         }
 
@@ -78,10 +82,11 @@
             display: none;
             background-color: #f5d5b9;
             background-image: url("texture-small.png");
+            background-repeat: repeat-y;
         }
 
 
-        #transcription {
+        .transcription {
             display: none;
         }
 
@@ -127,7 +132,7 @@
             white-space: nowrap;
         }
 
-        #transcription .nav-link {
+        .transcription .nav-link {
             display: none;
         }
 
@@ -171,57 +176,83 @@
     <script>
 
         function view_folio(params) {
-            const page_no_max = 18;
+            const PAGE_NO_LAST = 18;
             const LEAVES = [2, 18];
 
             let number = parseInt(params.number);
-            let side = (params.side === 'b') ? "b" : "a";
 
-            let IS_SIDE_A = (side === 'a');
-            let IS_FIRST = (number === 1 && IS_SIDE_A);
+
+            let A = 'a';
+            let B = 'b';
+            let IS_FIRST = (number === 1);
 
             let IS_LEAF = LEAVES.includes(number);
-            let IS_LAST = (number === page_no_max && (!IS_SIDE_A || IS_LEAF));
-
-            let page_no_next = parseInt(number) + 1;
-            let page_no_prev = parseInt(number) - 1;
-            let page_src_verso = `folio${number}${side}-verso.html`;
-            let page_src_recto = `folio${number}${side}-recto.html`;
-            let uri_image = `folio${number}${side}.png`;
-            let uri_mask = `folio${number}${side}.svg`;
-            let style = `mask-image: url(${uri_mask}); -webkit-mask-image: url(${uri_mask});`;
-
-            $("#image").attr("style", style).attr("src", uri_image).show().css("display", "block");
-            $("#transcription").show()
-            $("#verso .text-content").load(page_src_verso);
-            $("#recto .text-content").load(page_src_recto);
+            let IS_LAST = (number === PAGE_NO_LAST);
 
 
-            const OTHER_SIDE = (IS_SIDE_A && !IS_LEAF) ? "b" : "a";
-
-            let NEXT_NUMBER = (IS_LEAF) ? number + 1 : number;
-            let PREV_NUMBER = (IS_LEAF) ? number - 1 : number;
-
-            let href_verso_prev = `?number=${PREV_NUMBER}&side=${OTHER_SIDE}`;
-            let href_recto_next = `?number=${NEXT_NUMBER}&side=${OTHER_SIDE}`;
-            $("#verso .prev").attr("href", href_verso_prev).show();
-
-            if (!IS_LAST) {
-                $("#recto .next").attr("href", href_recto_next).show();
-            }
+            let page_src_verso_b = `folio${number}${B}-verso.html`;
+            let page_src_recto_b = `folio${number}${B}-recto.html`;
 
 
-            if (IS_SIDE_A && !IS_LEAF) {
-                let href_verso_next = `?number=${number + 1}&side=a`;
-                let href_recto_prev = `?number=${number - 1}&side=a`;
-                $("#verso .next").attr("href", href_verso_next).show();
+            let uri_image_b = `folio${number}${B}.png`;
+            let uri_mask_b = `folio${number}${B}.svg`;
 
-                if (!IS_FIRST) {
-                    $("#recto .prev").attr("href", href_recto_prev).show();
+
+            function show_side(side, is_leaf) {
+                let page_src_verso_a = `folio${number}${side}-verso.html`;
+                let page_src_recto_a = `folio${number}${side}-recto.html`;
+                let uri_image_a = `folio${number}${side}.png`;
+                let uri_mask_a = `folio${number}${side}.svg`;
+                let style_a = `mask-image: url(${uri_mask_a}); -webkit-mask-image: url(${uri_mask_a});`;
+
+
+                let NEXT_NUMBER = number + 1;
+                let PREV_NUMBER = number - 1;
+
+                let href_verso_prev = `?number=${PREV_NUMBER}`;
+                let href_recto_next = `?number=${NEXT_NUMBER}`;
+
+
+                $(`.image.${side}`).attr("style", style_a).attr("src", uri_image_a).show().css("display", "block");
+                $(`.transcription.${side}`).show();
+                $(`.page.${side}`).show();
+                $(`.transcription .page.${side}.verso .text-content`).load(page_src_verso_a);
+                $(`.transcription .page.${side}.recto .text-content`).load(page_src_recto_a);
+
+
+                if (((side === B && is_leaf) || side === A) && !IS_FIRST) {
+                    $(`.transcription.${side} .nav-link.prev`).attr("href", href_verso_prev).show();
                 }
 
-                $("#transcription .page-break").show();
+                if (!IS_LAST) {
+                    $(`.transcription.${side} .nav-link.next`).attr("href", href_recto_next).show();
+                }
+
             }
+
+            if (!IS_LEAF) {
+                show_side(A, IS_LEAF);
+            }
+            show_side(B, IS_LEAF);
+
+
+            //
+            //
+            // // $(".transcription .page.b.verso .text-content").load(page_src_verso_b);
+            // // $(".transcription .page.b.recto .text-content").load(page_src_recto_b);
+            //
+            //
+            // let NEXT_NUMBER = number + 1;
+            // let PREV_NUMBER = number - 1;
+            //
+            // let href_verso_prev = `?number=${PREV_NUMBER}`;
+            // let href_recto_next = `?number=${NEXT_NUMBER}`;
+            // $(".transcription.a.recto .nav-link.prev").attr("href", href_verso_prev).show();
+            //
+            // if (!IS_LAST) {
+            //     $(".transcription.b .nav-link.next").attr("href", href_recto_next).show();
+            // }
+
 
         }
 
@@ -255,27 +286,42 @@
     <div class="header">Robert Brown War Diary Archive</div>
 </a>
 
-<img id="image">
+<img class="image a">
 
-<div id="transcription" class="text">
+<div class="text transcription a recto">
 
+    <a class="nav-link prev">↞ Previous</a>
+    <div class="page a recto">
 
-    <div class="page" id="verso">
-        <a class="nav-link prev">↞ Previous</a>
         <div class="text-content"></div>
-        <a class="nav-link next">Next ↠</a>
-    </div>
 
-    <div class="page-break"><br/><br/></div>
-
-    <div class="page" id="recto">
-        <a class="nav-link prev">↞ Previous</a>
-        <div class="text-content"></div>
-        <a class="nav-link next">Next ↠</a>
     </div>
 
 
 </div>
+
+<img class="image b">
+
+<div class="text transcription b">
+    <a class="nav-link prev">↞ Previous</a>
+
+    <div class="page b verso">
+        <div class="text-content"></div>
+    </div>
+
+    <div class="page b recto">
+        <div class="text-content"></div>
+    </div>
+
+    <div class="page-break"><br/><br/></div>
+
+    <div class="page a verso">
+        <div class="text-content"></div>
+    </div>
+
+    <a class="nav-link next">Next ↠</a>
+</div>
+
 
 <div id="intro" class="text"></div>
 
