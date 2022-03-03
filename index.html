@@ -174,85 +174,46 @@
 
     </style>
     <script>
+        const A = 'a';
+        const B = 'b';
+        const PAGE_NO_LAST = 18;
+        const LEAVES = [2, 18];
 
         function view_folio(params) {
-            const PAGE_NO_LAST = 18;
-            const LEAVES = [2, 18];
 
             let number = parseInt(params.number);
+            let is_first = (number === 1);
+            let is_leaf = LEAVES.includes(number);
+            let is_last = (number === PAGE_NO_LAST);
 
+            function show_side(side) {
 
-            let A = 'a';
-            let B = 'b';
-            let IS_FIRST = (number === 1);
-
-            let IS_LEAF = LEAVES.includes(number);
-            let IS_LAST = (number === PAGE_NO_LAST);
-
-
-            let page_src_verso_b = `folio${number}${B}-verso.html`;
-            let page_src_recto_b = `folio${number}${B}-recto.html`;
-
-
-            let uri_image_b = `folio${number}${B}.png`;
-            let uri_mask_b = `folio${number}${B}.svg`;
-
-
-            function show_side(side, is_leaf) {
-                let page_src_verso_a = `folio${number}${side}-verso.html`;
-                let page_src_recto_a = `folio${number}${side}-recto.html`;
+                let uri_page_verso = `folio${number}${side}-verso.html`;
+                let uri_page_recto = `folio${number}${side}-recto.html`;
                 let uri_image_a = `folio${number}${side}.png`;
                 let uri_mask_a = `folio${number}${side}.svg`;
                 let style_a = `mask-image: url(${uri_mask_a}); -webkit-mask-image: url(${uri_mask_a});`;
 
-
-                let NEXT_NUMBER = number + 1;
-                let PREV_NUMBER = number - 1;
-
-                let href_verso_prev = `?number=${PREV_NUMBER}`;
-                let href_recto_next = `?number=${NEXT_NUMBER}`;
-
-
                 $(`.image.${side}`).attr("style", style_a).attr("src", uri_image_a).show().css("display", "block");
                 $(`.transcription.${side}`).show();
                 $(`.page.${side}`).show();
-                $(`.transcription .page.${side}.verso .text-content`).load(page_src_verso_a);
-                $(`.transcription .page.${side}.recto .text-content`).load(page_src_recto_a);
+                $(`.transcription .page.${side}.verso .text-content`).load(uri_page_verso);
+                $(`.transcription .page.${side}.recto .text-content`).load(uri_page_recto);
 
-
-                if (((side === B && is_leaf) || side === A) && !IS_FIRST) {
-                    $(`.transcription.${side} .nav-link.prev`).attr("href", href_verso_prev).show();
+                if (((side === B && is_leaf) || side === A) && !is_first) {
+                    $(`.transcription.${side} .nav-link.prev`).attr("href", `?number=${number - 1}`).show();
                 }
 
-                if (!IS_LAST) {
-                    $(`.transcription.${side} .nav-link.next`).attr("href", href_recto_next).show();
+                if (!is_last) {
+                    $(`.transcription.${side} .nav-link.next`).attr("href", `?number=${number + 1}`).show();
                 }
 
             }
 
-            if (!IS_LEAF) {
-                show_side(A, IS_LEAF);
+            if (!is_leaf) {
+                show_side(A);
             }
-            show_side(B, IS_LEAF);
-
-
-            //
-            //
-            // // $(".transcription .page.b.verso .text-content").load(page_src_verso_b);
-            // // $(".transcription .page.b.recto .text-content").load(page_src_recto_b);
-            //
-            //
-            // let NEXT_NUMBER = number + 1;
-            // let PREV_NUMBER = number - 1;
-            //
-            // let href_verso_prev = `?number=${PREV_NUMBER}`;
-            // let href_recto_next = `?number=${NEXT_NUMBER}`;
-            // $(".transcription.a.recto .nav-link.prev").attr("href", href_verso_prev).show();
-            //
-            // if (!IS_LAST) {
-            //     $(".transcription.b .nav-link.next").attr("href", href_recto_next).show();
-            // }
-
+            show_side(B);
 
         }
 
@@ -303,7 +264,8 @@
 <img class="image b">
 
 <div class="text transcription b">
-    <a class="nav-link prev">↞ Previous</a>
+
+<a class="nav-link prev">↞ Previous</a>
 
     <div class="page b verso">
         <div class="text-content"></div>
@@ -320,6 +282,7 @@
     </div>
 
     <a class="nav-link next">Next ↠</a>
+
 </div>
 
 
