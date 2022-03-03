@@ -71,7 +71,7 @@
         }
 
         .transcription.text * :not(.tooltip-text) {
-            font-family: "Segoe UI", Arial, serif;
+            font-family: "Segoe UI", Arial, sans-serif;
         }
 
         #intro.text * {
@@ -89,7 +89,7 @@
             display: none;
         }
 
-        .text * :not(.nav-link) {
+        .text * :not(.nav-link) :not(.page-break) {
 
             display: inline;
 
@@ -129,7 +129,7 @@
 
         .nav-link {
             white-space: nowrap;
-            font-family: "Segoe UI", Arial, serif;
+            font-family: "Segoe UI", Arial, sans-serif;
         }
 
         .transcription .nav-link {
@@ -137,11 +137,15 @@
         }
 
         .page-break {
-            display: none;
+            display: block;
+            text-align: center;
+        }
+
+        .serif {
+            font-family: Georgia, "Times New Roman", serif;
         }
 
         .header {
-            font-family: Georgia, "Times New Roman", serif;
             color: rgb(148, 112, 40);
             font-size: 32px;
         }
@@ -156,7 +160,6 @@
             visibility: hidden;
             font-family: Georgia, "Times New Roman", serif;
             width: 200px;
-
             color: black;
             text-align: center;
             border-radius: 6px;
@@ -245,7 +248,7 @@
 <body>
 
 <a href=".">
-    <div class="header">Robert Brown War Diary Archive</div>
+    <div class="header serif">Robert Brown War Diary Archive</div>
 </a>
 
 <div id="intro" class="text"></div>
@@ -275,12 +278,14 @@
     </span>
 
     <span class="page b recto">
+        <div class="page-break">⁂</div>
         <span class="text-content"></span>
     </span>
 
-    <div class="page-break"><br/><br/></div>
+
 
     <span class="page a verso">
+        <div class="page-break">⁂</div>
         <span class="text-content"></span>
     </span>
 
