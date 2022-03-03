@@ -200,7 +200,7 @@
                 $(`.transcription .page.${side}.verso .text-content`).load(uri_page_verso);
                 $(`.transcription .page.${side}.recto .text-content`).load(uri_page_recto);
 
-                if ((!(side === B) || is_leaf) && !is_first) {
+                if ((side !== B || is_leaf) && !is_first) {
                     $(`.transcription.${side} .nav-link.prev`).attr("href", `?number=${number - 1}`).show();
                 }
 
