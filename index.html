@@ -190,17 +190,17 @@
 
                 let uri_page_verso = `folio${number}${side}-verso.html`;
                 let uri_page_recto = `folio${number}${side}-recto.html`;
-                let uri_image_a = `folio${number}${side}.png`;
-                let uri_mask_a = `folio${number}${side}.svg`;
-                let style_a = `mask-image: url(${uri_mask_a}); -webkit-mask-image: url(${uri_mask_a});`;
+                let uri_image = `folio${number}${side}.png`;
+                let uri_mask = `folio${number}${side}.svg`;
+                let style_image = `mask-image: url(${uri_mask}); -webkit-mask-image: url(${uri_mask});`;
 
-                $(`.image.${side}`).attr("style", style_a).attr("src", uri_image_a).show().css("display", "block");
+                $(`.image.${side}`).attr("style", style_image).attr("src", uri_image).show().css("display", "block");
                 $(`.transcription.${side}`).show();
                 $(`.page.${side}`).show();
                 $(`.transcription .page.${side}.verso .text-content`).load(uri_page_verso);
                 $(`.transcription .page.${side}.recto .text-content`).load(uri_page_recto);
 
-                if (((side === B && is_leaf) || side === A) && !is_first) {
+                if ((!(side === B) || is_leaf) && !is_first) {
                     $(`.transcription.${side} .nav-link.prev`).attr("href", `?number=${number - 1}`).show();
                 }
 
