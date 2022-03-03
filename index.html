@@ -130,6 +130,7 @@
 
         .nav-link {
             white-space: nowrap;
+            font-family: "Segoe UI", Arial, serif;
         }
 
         .transcription .nav-link {
@@ -144,7 +145,6 @@
             color: rgb(148, 112, 40);
             font-size: 32px;
         }
-
 
         .tooltip {
             position: relative;
@@ -161,8 +161,6 @@
             text-align: center;
             border-radius: 6px;
             padding: 5px 0;
-
-            /* Position the tooltip */
             position: absolute;
             z-index: 1;
         }
@@ -247,16 +245,18 @@
     <div class="header">Robert Brown War Diary Archive</div>
 </a>
 
+<div id="intro" class="text"></div>
+
 <img class="image a">
 
 <div class="text transcription a recto">
 
     <a class="nav-link prev">↞ Previous</a>
-    <div class="page a recto">
+    <span class="page a recto">
 
-        <div class="text-content"></div>
+        <span class="text-content"></span>
 
-    </div>
+    </span>
 
 
 </div>
@@ -265,28 +265,25 @@
 
 <div class="text transcription b">
 
-<a class="nav-link prev">↞ Previous</a>
+    <a class="nav-link prev">↞ Previous</a>
 
-    <div class="page b verso">
-        <div class="text-content"></div>
-    </div>
+    <span class="page b verso">
+        <span class="text-content"></span>
+    </span>
 
-    <div class="page b recto">
-        <div class="text-content"></div>
-    </div>
+    <span class="page b recto">
+        <span class="text-content"></span>
+    </span>
 
     <div class="page-break"><br/><br/></div>
 
-    <div class="page a verso">
-        <div class="text-content"></div>
-    </div>
+    <span class="page a verso">
+        <span class="text-content"></span>
+    </span>
 
     <a class="nav-link next">Next ↠</a>
 
 </div>
-
-
-<div id="intro" class="text"></div>
 
 
 </body>
